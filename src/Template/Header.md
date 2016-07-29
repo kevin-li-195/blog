@@ -5,4 +5,4 @@ Kevin Li - Blog
 * Contact
 * CV
 
-> For TL;DR of any given post, just read the blockquoted sections.
+> For TL;DR of any post, just read the blockquoted sections.
