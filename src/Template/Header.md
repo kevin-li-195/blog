@@ -1,6 +1,7 @@
 Kevin Li - Blog
 =====
 
-* Articles
+* Posts
 * Contact
 * CV
+* > For TL;DR of any given post, just read the blockquoted sections.
