@@ -1,5 +1,5 @@
 ## What are **swaps**?
-##### Finance => Derivatives
+##### Finance - Derivatives
 
 A good friend asked a good question the other day:
 
@@ -147,3 +147,17 @@ Thus, we can use interest rate swaps to control our exposure to changes in inter
 > This of course is possible! But, as in many cases pertaining to finance and accounting, we want
 > to avoid surprises. In other words, we'd like our financial position's sensitivity to variance in interest
 > rates to be as low as possible.
+
+### Foreign Exchange Risk
+
+Now that we have a nice understanding of interest rate risk, it should be much easier to generalize
+this concept to other forms of risk!
+
+Simply put:
+> Foreign exchange risk is risk from to unexpected fluctuations in exchange rates.
+> This kind of risk occurs when business is conducted across borders, and transactions
+> may be denoted in foreign currencies.
+
+> *Sidenote*: There are many different kinds of exposure when it comes to foreign exchange risk, but it's
+> not important to go into that much detail right now. But for those who are more financially versed,
+> we'll only talk about foreign exchange risk in the context of [transaction exposure](https://en.wikipedia.org/wiki/Foreign_exchange_risk#Transaction_exposure).
