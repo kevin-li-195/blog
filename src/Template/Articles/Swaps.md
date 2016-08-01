@@ -87,10 +87,63 @@ so she asks for a **floating** rate loan. The Bank of Money obliges, and gives h
 + 0.50% (the LIBOR is the London Interbank Offered Rate, and it is one of those commonly quoted fluctuating
 interest rates out there.).
 
-She quickly looks up the current 1 year LIBOR rate, and sees that it's **3%**! With the additional 0.50%, that's only a **3.50%**
-interest rate! That means that in a year, assuming LIBOR doesn't change (but you, the reader, now probably know
-what's coming next), she'll only have to pay **103,500 Currency!**
+She quickly looks up the current 1 year LIBOR, and sees that it's **3%**. With the additional 0.50%, that's only a **3.50%**
+interest rate. That means that in a year, assuming LIBOR doesn't change (but you, the reader, now probably know
+what's coming next), she'll only have to pay **103,500 Currency.**
 
 "What a steal!" she cackles as she signs the contract with a crow's feather dipped in pig's blood.
 
-One year later, she comes back triumphantly to repay her debt of 100,000 + 3,500 Currency. But what's this? The 1 year LIBOR rate has gone up from 3% to 5%! This means that instead of paying 103,500 Currency, she'll have to pay 105,500 instead.
+One year later, she comes back triumphantly to repay her debt of 100,000 + 3,500 Currency. But what's this? The 1 year LIBOR has gone up from 3% to 5%! This means that instead of paying 103,500 Currency, she'll have to pay 105,500 instead.
+
+---
+
+It should be pretty clear what the risk is here!
+
+> Interest rate risk is your exposure to changes in interest rates.
+> Fixed rate loans are exposed to downward shifts in interest rates.
+> Floating rate loans are exposed to upward shifts in interest rates.
+> The converse is true if you are the party who is lending money.
+
+Let's see how Interest Rate Swaps can help us hedge against this risk.
+
+### Interest Rate Swaps
+
+Remember how we had earlier defined a swap as an agreement to exchange certain things at certain periods in time? Well,
+we can use such an agreement to take advantage of decreases in interest rates, if we're currently locked into a fixed
+rate contract.
+
+Let's say that in our previous case where you had a contract for 100,000 Currency at 5%, you believed that it is likely
+that interest rates are going to go down; specifically, the LIBOR. But you can't change the terms of the contract, so
+you can form an agreement with someone else that looks like this:
+
+1. You pay them LIBOR + 0.50% on some agreed upon amount (called the **notional**) every year. This notional
+amount generally doesn't change hands; it's just there so that we can express payments in percentages.
+Let's say that this amount is 50,000 Currency.
+2. They pay you a fixed 4% on the notional every year.
+
+Now, we have effectively hedged ourselves slightly against drops in LIBOR. Let's do some math!
+
+Our original contract was for 100,000 Currency, to be paid in one year, at 5% fixed per annum.
+
+We currently have agreed to pay floating-for-fixed, with the terms that we are to **pay** LIBOR + 0.50% and **receive** 4%
+on a notional amount of 50,000 Currency.
+
+Let's say that LIBOR, when the debt comes due, has fallen to 2.00%. Without this agreement, we would be stuck paying
+105,000 Currency. But now that we have this interest rate swap, we now receive 4% on 50,000 Currency (which comes out
+to 2,000 Currency) and pay 2.50% of 50,000 (which comes out to 1,250 Currency), which provides us with a net
+income of 750 Currency!
+
+Similarly, if we're on the opposite side of the table (i.e. we are currently locked into a floating rate loan,
+and we believe that rates are going to go up), we can choose to enter into an interest rate swap agreement
+so that we **pay fixed** and **receive floating.**
+
+Thus, we can use interest rate swaps to control our exposure to changes in interest rates! Whee!
+
+> Note: It should be made clear that of course there is also **upside** exposure if we don't enter
+> into an interest rate swap agreement (e.g. if we're in a fixed rate contract, and rates go up, then we're paying
+> less than what the market would have us pay. If we're in a floating rate contract, and rates go down,
+> then we're paying less than what we otherwise would have paid if rates did not go down).
+> 
+> This of course is possible! But, as in many cases pertaining to finance and accounting, we want
+> to avoid surprises. In other words, we'd like our financial position's sensitivity to variance in interest
+> rates to be as low as possible.
