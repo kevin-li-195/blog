@@ -3,8 +3,10 @@
 import           Data.Monoid (mappend)
 import           Hakyll
 import           Hakyll.Core.Routes
+import           Hakyll.Core.Identifier
 import           Text.Megaparsec
 import           Text.Megaparsec.Char
+import           Text.Megaparsec.String
 
 
 --------------------------------------------------------------------------------
@@ -74,13 +76,13 @@ rmSrcRoute = customRoute removeSrc
 
 srcParser :: Parser FilePath
 srcParser = do
-    string "src"
+    string "src/"
     anyChar `manyTill` eof
 
 removeSrc :: Identifier -> FilePath
-removeSrc i = case runParser srcParser $ toFilePath i of
-    Left _ -> toFilePath i
-    Right s -> s
+removeSrc i = case runParser srcParser "srcroute" $ toFilePath i of
+                    Left _ -> toFilePath i
+                    Right s -> s
 
 -- | Convenience function for 'Routes' composition.
 (<.>) :: Routes -> Routes -> Routes
