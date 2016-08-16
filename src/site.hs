@@ -36,7 +36,7 @@ main = hakyll $ do
     create ["archive.html"] $ do
         route rmSrcRoute
         compile $ do
-            posts <- recentFirst =<< loadAll "posts/*"
+            posts <- recentFirst =<< loadAll "src/posts/*"
             let archiveCtx =
                     listField "posts" postCtx (return posts) `mappend`
                     constField "title" "Archives"            `mappend`
