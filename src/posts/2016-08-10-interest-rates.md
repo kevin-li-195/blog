@@ -1,3 +1,10 @@
+-----
+title: What are interest rates?
+-----
+##### Finance
+
+Work in progress:
+
 What this means is that when you take out a loan (i.e. borrowing money) from The Bank of Money, that loan will
 have some terms on it. There are lots of terms that we don't need to talk about right now (but I felt it was
 important to mention because the interest rate shouldn't be the only factor you consider when taking out
