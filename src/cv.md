@@ -56,11 +56,11 @@ probabilistic function, which can help us numerically approximate the
 distribution of a complicated statistical process. Haskell's do-notation
 lets us intuitively describe the act of sampling from a Sample computation.
 
-An extension to the Sample monad is the MonteCarlo type, which
-allows us to generate MonteCarlo simulations also by monadic composition.
-As the MonteCarlo type is built on top of the Sample monad, we can
+An extension to the Sample monad is the StochProcess type, which
+allows us to construct stochastic processes by monadic composition.
+As the StochProcess type is built on top of the Sample monad, we can
 use the two together by simply lifting the Sample computation to the
-MonteCarlo type.
+StochProcess type.
 
 A better description can be found in one of my [blog posts](http://kevinl.io/posts/2016-08-17-sampling-monad.html).
 

@@ -104,4 +104,4 @@ when sampling from the normal distribution.
 -----
 
 Show profiling charts here, demonstrate linear in number of
-composed MonteCarlo samples.
+composed StochProcess samples.
