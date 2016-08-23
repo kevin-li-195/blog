@@ -16,7 +16,8 @@ shadyGambler b = if b then discrete [(100, 0.9), ((-100), 0.1)]
                  else certain (-100)
 ```
 
-> Note: We'll introduce the Distribution a datatype and associate typeclasses later on.
+
+> Note: We'll introduce the Distribution a datatype and associated typeclasses later on.
 
 Which represents the following:
 
@@ -83,3 +84,24 @@ rain3Days' d = do
     d'' <- rainTomorrow d'
     rainTomorrow d''
 ```
+
+Notes:
+
+With my original implementation, the monad laws were broken.
+
+This is because I was sampling **twice** (using the Box-Muller method)
+and using the 2nd returned RNG when sampling from a normal distribution
+(when I was only sampling **once** and returning the first RNG
+for most other distributions, and sampling **zero** times
+for Certain distributions).
+
+In order to make these laws work though, we had to get the next
+RNG when sampling from the Certain distribution
+(making sure to sample from the same range of numbers each time),
+and return the first RNG (from the first out of two samples) returned
+when sampling from the normal distribution.
+
+-----
+
+Show profiling charts here, demonstrate linear in number of
+composed MonteCarlo samples.
