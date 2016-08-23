@@ -52,7 +52,6 @@ main = hakyll $ do
         compile $ do
             pandocCompiler
                 >>= loadAndApplyTemplate "src/templates/default.html" defaultContext
-                >>= relativizeUrls
 
     match "src/index.html" $ do
         route rmSrcRoute

@@ -44,9 +44,9 @@ users with preferred job listings.
 
 ## Projects
 
-Additional projects can be found on my [Github](github.com/kevin-li-195).
+Additional projects can be found on my [Github](https://www.github.com/kevin-li-195).
 
-### **[stat-sampling - Haskell](www.github.com/labcoders/jafar)**
+### **[stat-sampling - Haskell](https://www.github.com/labcoders/jafar)**
 
 Library for monadic composition of probabilistic functions using
 arbitrary probability distributions.
@@ -64,11 +64,11 @@ MonteCarlo type.
 
 A better description can be found in one of my [blog posts](http://kevinl.io/posts/2016-08-17-sampling-monad.html).
 
-### **[Jafar - Haskell](www.github.com/labcoders/jafar)**
+### **[Jafar - Haskell](https://www.github.com/labcoders/jafar)**
 
 EDSL for describing Bitcoin trading algorithms, backtester for
 said algorithms, plus sample EMA crossover algorithm.
 
-### **[Zeno - Haskell](www.github.com/kevin-li-195/zeno)**
+### **[Zeno - Haskell](https://www.github.com/kevin-li-195/zeno)**
 
 Tool for interacting with the mouse cursor with Vim-like commands.
