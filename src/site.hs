@@ -20,7 +20,7 @@ main = hakyll $ do
         route   rmSrcRoute
         compile compressCssCompiler
 
-    match (fromList ["src/about.rst", "src/contact.markdown"]) $ do
+    match "src/contact.markdown" $ do
         route   $ setExtension "html" <.> rmSrcRoute
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "src/templates/default.html" defaultContext
@@ -47,6 +47,12 @@ main = hakyll $ do
                 >>= loadAndApplyTemplate "src/templates/default.html" archiveCtx
                 >>= relativizeUrls
 
+    match "src/cv.md" $ do
+        route $ setExtension "html" <.> rmSrcRoute
+        compile $ do
+            pandocCompiler
+                >>= loadAndApplyTemplate "src/templates/default.html" defaultContext
+                >>= relativizeUrls
 
     match "src/index.html" $ do
         route rmSrcRoute
