@@ -419,7 +419,7 @@ main = do
 
 Let's see how our winnings are distributed!
 
-![Contrived Histogram](images/contrived.png)
+![](/images/contrived.png)
 
 Dude that's pretty cool.
 

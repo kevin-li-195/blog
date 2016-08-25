@@ -54,3 +54,7 @@ div.info {
     font-size: 14px;
     font-style: italic;
 }
+
+div.figure img {
+    width: 600px;
+}
