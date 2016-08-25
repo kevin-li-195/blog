@@ -1,5 +1,5 @@
 -----
-title: Implementation of Sampling Monad
+title: A Monad for Probabilistic Computations
 subject: Haskell
 -----
 
@@ -434,7 +434,7 @@ the larger computations that we'll run.
 
 [Github repo](https://github.com/kevin-li-195/stat-sampling)
 
-[Hackage page](https:/hackathafasdfasdal)
+[Hackage page](https://hackage.haskell.org/package/stochastic)
 
 Disclaimer: I'm no statistician, nor am I a genius category theorist, so if you find
 any mistakes/bugs/optimizations, please submit a pull request! There is also a super
