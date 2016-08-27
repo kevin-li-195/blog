@@ -98,7 +98,7 @@ This would be super nice to have! Now if we have no rain today, we'll
 have a Distribution datatype from which we can draw samples.
 
 ```haskell
-rain3DaysFrom0 = raind3Days 0
+rain3DaysFrom0 = rain3Days 0
 ```
 
 Let's get to work!
@@ -237,8 +237,8 @@ main = do
     s <- sampleION 1000000 $ gamblerGivenCoin fairCoin
     let wins = S.filter (== 100) s
         losses = S.filter (== (-100)) s
-    print $ "Wins with fair coin: " ++ (show $ length wins)
-    print $ "Losses with fair coin: " ++ (show $ length losses)
+    putStrLn $ "Wins with fair coin: " ++ (show $ length wins)
+    putStrLn $ "Losses with fair coin: " ++ (show $ length losses)
 ```
 
 Results:
@@ -320,8 +320,8 @@ main = do
     let a = sampleN 100000 montyHall gen
         a' = S.filter (== Car) a
         a'' = S.filter (== Goat) a
-    print $ "Number of cars won: " ++ (show $ length a')
-    print $ "Number of goats won: " ++ (show $ length a'')
+    putStrLn $ "Number of cars won: " ++ (show $ length a')
+    putStrLn $ "Number of goats won: " ++ (show $ length a'')
 
 Number of cars won: 66659
 Number of goats won: 33341
