@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cabal run clean; cabal run build; chmod a+rx -R _site
