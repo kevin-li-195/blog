@@ -4,6 +4,7 @@ import           Data.Monoid (mappend)
 import           Hakyll
 import           Hakyll.Core.Routes
 import           Hakyll.Core.Identifier
+import           Text.Pandoc
 import           Text.Megaparsec
 import           Text.Megaparsec.Char
 import           Text.Megaparsec.String
@@ -22,7 +23,7 @@ main = hakyll $ do
 
     match "src/contact.markdown" $ do
         route   $ setExtension "html" <.> rmSrcRoute
-        compile $ pandocCompiler
+        compile $ pandocMathCompiler
             >>= loadAndApplyTemplate "src/templates/default.html" defaultContext
             >>= relativizeUrls
 
@@ -94,3 +95,11 @@ removeSrc i = case runParser srcParser "srcroute" $ toFilePath i of
 -- | Convenience function for 'Routes' composition.
 (<.>) :: Routes -> Routes -> Routes
 a <.> b = a `composeRoutes` b
+
+pandocMathCompiler :: Compiler (Item String)
+pandocMathCompiler
+    = pandocCompilerWith readerOptions writerOptions where
+        readerOptions = defaultHakyllReaderOptions
+        writerOptions = defaultHakyllWriterOptions
+            { writerHTMLMathMethod = MathJax ""
+            }
