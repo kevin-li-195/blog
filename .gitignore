@@ -3,3 +3,4 @@ cabal.sandbox.config
 _cache
 _site
 dist
+dist-newstyle
