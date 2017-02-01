@@ -46,7 +46,7 @@ snake is 0, because we have certainly seen one snake, and
 if we have seen one then the other must be a lizard. This
 is similar for the third case.
 
-Thus we have $ \frac{1 + 0 + 0}{3} = \frac{1}{3} $. The probability
+Thus we have $$ \frac{1 + 0 + 0}{3} = \frac{1}{3} $$ The probability
 that the other pet is a snake, given that we have
 observed a snake on the floor, is one third.
 
@@ -70,19 +70,22 @@ But there is a real solution! Really! I promise!
 We can formulate the probability that we would like to
 compute as a condition probability:
 
-$$ \mathrm{P}(\text{Both pets are snakes} | \text{One snake is named Mr. Slithers}) $$
+$$ \frac{}{} \mathrm{\Pr ( \text{Both pets are snakes} | \text{One snake is named Mr. Slithers})} $$
 
 Which is read "The probability that both pets are snakes given that
 at least one of them is named Mr. Slithers".
 
 Using Baye's Theorem, we can reformulate that as:
 
-$$ \frac{\mathrm{P}(\text{One snake is named Mr. Slithers} | \text{Both pets are snakes})
-    \mathrm{P}(\text{Both pets are snakes})}{\mathrm{P}(\text{One snake is named Mr. Slithers})} $$
+$$ \frac{\Pr (\text{One snake is named Mr. Slithers} | \text{Both pets are snakes})
+    \Pr(\text{Both pets are snakes})}{\Pr(\text{One snake is named Mr. Slithers})} $$
 
 Now, we have three probabilities to compute!
 
-First, $ \mathrm{P}(\text{One snake is named Mr. Slithers} | \text{Both pets are snakes}) $.
+First: 
+
+$$\frac{}{} \Pr(\text{One snake is named Mr. Slithers} | \text{Both pets are snakes})$$
+
 This is the probability that at least one snake is named Mr. Slithers, given
 that both pets are snakes.
 
@@ -93,23 +96,32 @@ of each other, we can simply multiply the probability that the first snake
 is not named Mr. Slithers with the probability that the second snake
 is not named Mr. Slithers. In other words:
 
-$$ \mathrm{P}(\text{One snake is named Mr. Slithers} | \text{Both pets are snakes}) 
-= 1 - (\mathrm{P}(\text{Snake 1 is not named Mr. Slithers})\mathrm{P}(\text{Snake 2 is not named Mr. Slithers})) $$
+$$ \frac{}{} \Pr(\text{One snake is named Mr. Slithers} | \text{Both pets are snakes}) 
+= 1 - (\Pr(\text{Snake 1 is not named Mr. Slithers})\Pr(\text{Snake 2 is not named Mr. Slithers})) $$
 
-This expression is equal to $ 1 - (1 - p)^2 = 2p - p^2 $.
+This expression is equal to: $$ \frac{}{} 1 - (1 - p)^2 = 2p - p^2 $$
 
-Second, $ \mathrm{P}(\text{Both pets are snakes}) $. This is easy,
+Second:
+
+$$ \frac{}{} \Pr(\text{Both pets are snakes}) $$
+
+This is easy,
 since there are four possible combinations of pets, and each one occurs with
-equal probability. Thus, we have $ \frac{1}{4} $.
+equal probability. Thus, we have $$ \frac{1}{4} $$
 
-Third, $ \mathrm{P}(\text{One snake is named Mr. Slithers} $. This one is trickier.
+Third: 
+
+$$ \frac{}{} \Pr(\text{One snake is named Mr. Slithers} $$
+
+This one is trickier.
 We can solve this by analyzing the four cases (i.e. four events), which again
 occur with equal probability.
 
 In the first event, where both pets are snakes, the probability that at least
 one of them is named Mr. Slithers is, again, the probability of the complement
 of the event that neither of them are named Mr. Slithers. Thus, it is
-$ 1 - (1 - p)^2 = 2p - p^2 $.
+
+$$ 1 - (1 - p)^2 = 2p - p^2 \frac{}{}$$
 
 In the second event, where pet one is a snake, and pet two is a lizard,
 the only way to have one snake be named Mr. Slithers is for
@@ -119,63 +131,75 @@ This is the same for the third event.
 For the fourth and final event, the probability that a snake is named
 Mr. Slithers is 0. This is because in this event, there are no snakes.
 
-Thus, we have $ \frac{2p - p^2 + p + p}{4} = \frac{4p - p^2}{4} $.
+Thus, we have: 
+
+$$ \frac{2p - p^2 + p + p}{4} = \frac{4p - p^2}{4} $$
 
 Now we recombine our expressions! This yields:
 
-$$ \mathrm{P}(\text{Both pets are snakes} | \text{One snake is named Mr. Slithers})
+$$ \Pr(\text{Both pets are snakes} | \text{One snake is named Mr. Slithers})
 = \frac{2 - p}{4 - p} $$
 
 This is surprising and interesting, because it tells us that for
 small *p*, the probability that the other pet is a snake
 (if our friend shouts "that's Mr. Slithers!" when a snake
-slithers across our feet) is close to $ \frac{1}{2} $. But for
-large *p*, this amount is close to $ \frac{1}{3} $.
+slithers across our feet) is close to $$ \frac{1}{2} $$ But for
+large *p*, this amount is close to $$\frac{1}{3} $$
 Interestingly, the probability of our friend choosing a name
 for her snake tells us something about the other pet.
 
 This result is so surprising that we decided to simulate it
 (using the Haskell stochastic library!)
 
-> import Data.Stochastic
-> import qualified Data.Sequence as S
+```haskell
+import Data.Stochastic
+import qualified Data.Sequence as S
+```
 
 Imports.
 
-> data Pet = Snake | Lizard
->     deriving (Eq, Ord, Show)
-> 
-> data Name = Slithers | NotSlithers
->     deriving (Eq, Ord, Show)
+```haskell
+data Pet = Snake | Lizard
+    deriving (Eq, Ord, Show)
+
+data Name = Slithers | NotSlithers
+    deriving (Eq, Ord, Show)
 
 Our datatypes representing names and
 types of pets.
+```
 
-> petshop :: Sampler Pet
-> petshop = discrete [(Snake, 0.5), (Lizard, 0.5)]
+```haskell
+petshop :: Sampler Pet
+petshop = discrete [(Snake, 0.5), (Lizard, 0.5)]
+```
 
 This is the probability of picking a
 pet when your friend is at the pet store,
 according to a fair coin toss.
 
-> name :: Double -> Pet -> Sampler Name
-> name p Snake = discrete [(Slithers, p), (NotSlithers, (1-p))]
-> name _ Lizard = pure NotSlithers
+```haskell
+name :: Double -> Pet -> Sampler Name
+name p Snake = discrete [(Slithers, p), (NotSlithers, (1-p))]
+name _ Lizard = pure NotSlithers
+```
 
 This is the naming function that your
 friend uses.
 
-> friend :: Double -> Sampler Pet
-> friend p = do
->     p1 <- petshop
->     p2 <- petshop
->     n1 <- name p p1
->     n2 <- name p p2
->     if n1 == Slithers then do
->         return p2
->     else if n2 == Slithers then do
->         return p1
->     else friend p
+```haskell
+friend :: Double -> Sampler Pet
+friend p = do
+    p1 <- petshop
+    p2 <- petshop
+    n1 <- name p p1
+    n2 <- name p p2
+    if n1 == Slithers then do
+        return p2
+    else if n2 == Slithers then do
+        return p1
+    else friend p
+```
 
 This function represents the process
 that your friend executes. She picks
@@ -189,20 +213,24 @@ any pet Mr. Slithers, we simply try
 again (since we assert that one pet is
 a snake and is named Mr. Slithers).
 
-> main :: IO ()
-> main = do
->     let ps = [0.01,0.02..0.99]
->         total = 10000
->     results <- mapM (\x -> sampleION total (friend x)) ps
->     let snakes = fmap (\x -> fromIntegral (length (S.filter (== Snake) x)) / fromIntegral total) results
->     putStrLn $ show snakes
+```haskell
+main :: IO ()
+main = do
+    let ps = [0.01,0.02..0.99]
+        total = 10000
+    results <- mapM (\x -> sampleION total (friend x)) ps
+    let snakes = fmap (\x -> 
+        fromIntegral (length (S.filter (== Snake) x)) / fromIntegral total) 
+        results
+    putStrLn $ show snakes
+```
 
 We simulate this process 10,000 times,
 varying the value of p from small values
 to large values. As **unexpected**, for
-small *p* we get values close to $\frac{1}{2}$,
+small *p* we get values close to $$\frac{1}{2}$$,
 and for large *p* we get values close to
-$ \frac{1}{3} $.
+$$ \frac{1}{3} $$
 
 Cool eh?
 
