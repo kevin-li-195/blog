@@ -62,7 +62,7 @@ over your feet, and your friend exclaims "that's Mr. Slithers!"
 What is the probability that the other pet is a snake?
 
 Now this may seem like one of those goofy physics problems
-where they expect you to compute the massive of the sun given
+where they expect you to compute the mass of the sun given
 that a green camel stands in the desert at night-time.
 
 But there is a real solution! Really! I promise!
@@ -96,8 +96,10 @@ of each other, we can simply multiply the probability that the first snake
 is not named Mr. Slithers with the probability that the second snake
 is not named Mr. Slithers. In other words:
 
-$$ \frac{}{} \Pr(\text{One snake is named Mr. Slithers} | \text{Both pets are snakes}) 
-= 1 - (\Pr(\text{Snake 1 is not named Mr. Slithers})\Pr(\text{Snake 2 is not named Mr. Slithers})) $$
+$$\begin{eqnarray}
+    \Pr(\text{One snake is named Mr. Slithers} | \text{Both pets are snakes}) &=& \nonumber \\
+    1 - (\Pr(\text{Snake 1 is not named Mr. Slithers})\Pr(\text{Snake 2 is not named Mr. Slithers}))
+\end{eqnarray}$$
 
 This expression is equal to: $$ \frac{}{} 1 - (1 - p)^2 = 2p - p^2 $$
 
@@ -111,7 +113,7 @@ equal probability. Thus, we have $$ \frac{1}{4} $$
 
 Third: 
 
-$$ \frac{}{} \Pr(\text{One snake is named Mr. Slithers} $$
+$$ \frac{}{} \Pr(\text{One snake is named Mr. Slithers}) $$
 
 This one is trickier.
 We can solve this by analyzing the four cases (i.e. four events), which again
