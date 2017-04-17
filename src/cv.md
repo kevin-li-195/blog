@@ -47,7 +47,7 @@ users with preferred job listings.
 
 Additional projects can be found on my [Github](https://www.github.com/kevin-li-195).
 
-### **[stat-sampling - Haskell](https://www.github.com/labcoders/jafar)**
+### **[stochastic - Haskell](https://hackage.haskell.org/package/stochastic)**
 
 Library for monadic composition of probabilistic functions using
 arbitrary probability distributions.
