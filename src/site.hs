@@ -48,13 +48,13 @@ main = hakyll $ do
                 >>= loadAndApplyTemplate "src/templates/default.html" archiveCtx
                 >>= relativizeUrls
 
-    match "src/cv.md" $ do
-        route $ setExtension "html" <.> rmSrcRoute
-        compile $ do
-            let cvCtx = defaultContext
-            pandocCompiler
-                >>= loadAndApplyTemplate "src/templates/default.html" cvCtx
-                >>= relativizeUrls
+    -- match "src/cv.md" $ do
+    --     route $ setExtension "html" <.> rmSrcRoute
+    --     compile $ do
+    --         let cvCtx = defaultContext
+    --         pandocCompiler
+    --             >>= loadAndApplyTemplate "src/templates/default.html" cvCtx
+    --             >>= relativizeUrls
 
     match "src/index.html" $ do
         route rmSrcRoute
