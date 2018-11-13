@@ -1,6 +1,4 @@
-.cabal-sandbox
-cabal.sandbox.config
+.stack-work/
+blog.cabal
+*~
 _cache
-_site
-dist
-dist-newstyle

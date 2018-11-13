@@ -1,0 +1,245 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Kevin Li - Blog - A Monad for Probabilistic Computations</title>
+        <link rel="stylesheet" type="text/css" href="../css/default.css" />
+		<script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML">
+        </script>
+		<script>
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+		  ga('create', 'UA-65318031-2', 'auto');
+		  ga('send', 'pageview');
+
+		</script>
+    </head>
+    <body>
+        <div id="header">
+            <h1>Kevin Li - Blog</h1>
+
+<ul>
+  <li><a href="../archive.html">Posts</a></li>
+  <li><a href="../contact.html">Contact</a></li>
+  <li><a href="../macro-list.html">Macro Charts</a></li>
+</ul>
+
+        </div>
+
+        <div id="content">
+            <h1>A Monad for Probabilistic Computations</h1>
+
+            <h3>Haskell</h3>
+<div class="info">
+    Posted on August 24, 2016
+    
+</div>
+
+<h3 id="what-we-want-to-do">What we want to do</h3>
+<p>We want a monad so that we may compose probabilistic computations.</p>
+<p>We also want to be able to use Haskell’s do-notation to intuitively describe the act of sampling from a probability distribution.</p>
+<p>Essentially, we want to write code that looks like the following:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" title="1">fairCoin <span class="fu">=</span> binomial <span class="fl">0.5</span></a>
+<a class="sourceLine" id="cb1-2" title="2"></a>
+<a class="sourceLine" id="cb1-3" title="3">shadyGambler b <span class="fu">=</span> <span class="kw">if</span> b <span class="kw">then</span> discrete [(<span class="dv">100</span>, <span class="fl">0.9</span>), ((<span class="fu">-</span><span class="dv">100</span>), <span class="fl">0.1</span>)]</a>
+<a class="sourceLine" id="cb1-4" title="4">                 <span class="kw">else</span> certain (<span class="fu">-</span><span class="dv">100</span>)</a></code></pre></div>
+<blockquote>
+<p>Note: Type annotations left out for suspense. And to not mislead the innocent.</p>
+</blockquote>
+<p>Which represents the following:</p>
+<p>We have a fair coin where the event of getting a heads (corresponding to True) has a Bernoulli distribution which assigns 0.5 to the event of getting True.</p>
+<p>We also have a shady gambler that you can play against. If you toss a coin, and it lands on <em>tails</em>, you lose 100. If it lands on <em>heads</em> you win 100! But when the coin lands on heads, 10% of the time, the shady gambler runs away with your money: basically a distribution over Doubles.</p>
+<p>Now we would like to produce samples after composing probabilistic functions. We would like to first sample a Boolean from our fairCoin, then pass it as a parameter to our shadyGambler. In order to do this, we would like to write code that looks like this:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" title="1">fairCoinShadyGambler <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb2-2" title="2">    coinResult <span class="ot">&lt;-</span> fairCoin</a>
+<a class="sourceLine" id="cb2-3" title="3">    shadyGambler b</a></code></pre></div>
+<p>Now, we can sample from this distribution and obtain results that we can then use for whatever purpose.</p>
+<p>This example isn’t very impressive; you could work out the resulting distribution on pencil and paper quite easily. But using this monad we can work our way up to describing much more complex probabilistic computations!</p>
+<p>For example, let’s say that the amount of rain <strong>tomorrow</strong> is normally distributed and is conditioned on the amount of rain <strong>today</strong>.</p>
+<p>We can write it like this:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb3-1" title="1">rainTomorrow d <span class="fu">=</span> <span class="kw">if</span> d <span class="fu">&lt;=</span> <span class="dv">0</span> <span class="kw">then</span> normal <span class="fl">1.0</span> <span class="fl">0.3</span></a>
+<a class="sourceLine" id="cb3-2" title="2">                 <span class="kw">else</span> <span class="kw">if</span> d <span class="fu">&lt;</span> <span class="dv">5</span> <span class="kw">then</span> normal <span class="dv">3</span> <span class="fl">0.3</span></a>
+<a class="sourceLine" id="cb3-3" title="3">                 <span class="kw">else</span> <span class="kw">if</span> d <span class="fu">&gt;=</span> <span class="dv">5</span> <span class="kw">then</span> normal <span class="dv">2</span> <span class="fl">0.3</span></a></code></pre></div>
+<p>This says that if we get no rain today, then tomorrow we expect 1 inch of rain, normally distributed with standard deviation 0.3.</p>
+<p>If we get less than 5 inches of rain today, then tomorrow we expect 3 inches of rain, normally distributed with standard deviation 0.3.</p>
+<p>If we get more than or equal to 5 inches of rain today, then tomorrow we expect 2 inches of rain, normally distributed with standard deviation 0.3.</p>
+<p>I am not a meteorologist.</p>
+<p>This conditional probability distribution allows us to now describe future events as a a function of current observations.</p>
+<p>But let’s say we want to produce a probabilistic function that takes current rain levels and describes how much rain we should expect <strong>3 days</strong> from now.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb4-1" title="1">rain3Days <span class="fu">=</span> rainTomorrow <span class="fu">&gt;=&gt;</span> rainTomorrow <span class="fu">&gt;=&gt;</span> rainTomorrow</a></code></pre></div>
+<p>Or alternatively:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb5-1" title="1">rain3Days' d <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb5-2" title="2">    d' <span class="ot">&lt;-</span> rainTomorrow d</a>
+<a class="sourceLine" id="cb5-3" title="3">    d'' <span class="ot">&lt;-</span> rainTomorrow d'</a>
+<a class="sourceLine" id="cb5-4" title="4">    rainTomorrow d''</a></code></pre></div>
+<p>This would be super nice to have! Now if we have no rain today, we’ll have a Distribution datatype from which we can draw samples.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb6-1" title="1">rain3DaysFrom0 <span class="fu">=</span> rain3Days <span class="dv">0</span></a></code></pre></div>
+<p>Let’s get to work!</p>
+<h3 id="what-we-need-to-do-in-order-to-do-what-we-want-to-do">What we need to do in order to do what we want to do</h3>
+<blockquote>
+<p>Okay, type annotations starting from now.</p>
+</blockquote>
+<p>First things first: we need a datatype to represent probability distributions.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">data</span> <span class="dt">Distribution</span> a <span class="kw">where</span></a>
+<a class="sourceLine" id="cb7-2" title="2">    <span class="dt">Normal</span><span class="ot"> ::</span> <span class="dt">Mean</span> <span class="ot">-&gt;</span> <span class="dt">StDev</span> <span class="ot">-&gt;</span> <span class="dt">Distribution</span> <span class="dt">Double</span></a>
+<a class="sourceLine" id="cb7-3" title="3">    <span class="dt">Bernoulli</span><span class="ot"> ::</span> <span class="dt">Double</span> <span class="ot">-&gt;</span> <span class="dt">Distribution</span> <span class="dt">Bool</span></a>
+<a class="sourceLine" id="cb7-4" title="4">    <span class="dt">Discrete</span><span class="ot"> ::</span> [(a, <span class="dt">Double</span>)] <span class="ot">-&gt;</span> <span class="dt">Distribution</span> a</a>
+<a class="sourceLine" id="cb7-5" title="5">    <span class="dt">Uniform</span><span class="ot"> ::</span> [a] <span class="ot">-&gt;</span> <span class="dt">Distribution</span> a</a>
+<a class="sourceLine" id="cb7-6" title="6">    <span class="dt">Certain</span><span class="ot"> ::</span> a <span class="ot">-&gt;</span> <span class="dt">Distribution</span> a</a></code></pre></div>
+<p>We use GADTs to constrain the types of values that we can sample from normal distributions and Bernoulli distributions.</p>
+<p>Cool! Now we need to be able to sample from these distributions. We define a typeclass called Sampleable that describes things from which we can draw samples.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">class</span> <span class="dt">Sampleable</span> d <span class="kw">where</span></a>
+<a class="sourceLine" id="cb8-2" title="2"><span class="ot">    certainDist ::</span> a <span class="ot">-&gt;</span> d a</a>
+<a class="sourceLine" id="cb8-3" title="3"><span class="ot">    sampleFrom ::</span> (<span class="dt">RandomGen</span> g) <span class="ot">=&gt;</span> d a <span class="ot">-&gt;</span> g <span class="ot">-&gt;</span> (a, g)</a></code></pre></div>
+<p>sampleFrom should take a “Sampleable” thing over values of type a, plus a random number generator, and returns a value of type a along with a new random number generator.</p>
+<p>certainDist should take a value and return a “Sampleable” thing that always returns the original value. This is useful because we want to make a monad, and we need to keep our monad instance as general as possible to be good little functional programmers.</p>
+<p>Now we just have to make Distribution an instance of Sampleable.</p>
+<p>I’ve left this implementation out since it’s a bit long and we have a long way to go.</p>
+<p>Cool! Now we have things that we can sample from and a way to sample from these things! We just need to make a monad that lets us Do What We Would Like To Do.</p>
+<p>First of all, we need to bake a random number generator into our monad so that when we have composed distributions, we can sample from the first one with the RNG, then pass the newly created one along to the next distribution.</p>
+<p>We thus consider our monad as a function that takes a random number generator and produces a distribution. This way, we are free to create any random number generator we want outside of the monad and use it to produce our samples.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">newtype</span> <span class="dt">Sample</span> g d a </a>
+<a class="sourceLine" id="cb9-2" title="2">    <span class="fu">=</span> <span class="dt">Sample</span> {<span class="ot"> runSample ::</span> (<span class="dt">RandomGen</span> g, <span class="dt">Sampleable</span> d) <span class="ot">=&gt;</span> g <span class="ot">-&gt;</span> (d a, g) }</a></code></pre></div>
+<p>The typeclass RandomGen is used to keep things nice and general, so that any random number generator can be used.</p>
+<p>Now, the monad instance.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb10-1" title="1"><span class="kw">instance</span> (<span class="dt">RandomGen</span> g, <span class="dt">Sampleable</span> d) <span class="ot">=&gt;</span> <span class="dt">Monad</span> (<span class="dt">Sample</span> g d) <span class="kw">where</span></a>
+<a class="sourceLine" id="cb10-2" title="2">    <span class="fu">return</span> x <span class="fu">=</span> <span class="dt">Sample</span> <span class="fu">$</span> \g <span class="ot">-&gt;</span> (certainDist x, <span class="fu">snd</span> <span class="fu">$</span> next g)</a>
+<a class="sourceLine" id="cb10-3" title="3">    (<span class="fu">&gt;&gt;=</span>) ma f <span class="fu">=</span> <span class="dt">Sample</span> <span class="fu">$</span> \g <span class="ot">-&gt;</span></a>
+<a class="sourceLine" id="cb10-4" title="4">                   <span class="kw">let</span> (dist, g') <span class="fu">=</span> runSample ma g</a>
+<a class="sourceLine" id="cb10-5" title="5">                       (a, g'') <span class="fu">=</span> sampleFrom dist g'</a>
+<a class="sourceLine" id="cb10-6" title="6">                   <span class="kw">in</span> runSample (f a) g''</a></code></pre></div>
+<p><em>return x</em> simply creates a function that takes a random number generator and returns a tuple containing a distribution that always returns <em>x</em> and the next random number generator.</p>
+<p><em>ma &gt;&gt;= f</em> is a bit more complicated. Essentially, bind constructs a function that samples from the left-hand side ‘Sample’ and passes the sampled value to the right-hand side function, while making sure that we always pass along new random number generators.</p>
+<p>Now we can use do-notation to make super intuitive samples! We just need a way to produce samples from the resulting ‘Sample g d a’ type. This turns out to be pretty easy.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb11-1" title="1"><span class="ot">sample ::</span> (<span class="dt">RandomGen</span> g, <span class="dt">Sampleable</span> d) <span class="ot">=&gt;</span> <span class="dt">Sample</span> g d a <span class="ot">-&gt;</span> g <span class="ot">-&gt;</span> (a, g)</a>
+<a class="sourceLine" id="cb11-2" title="2">sample s g <span class="fu">=</span> <span class="kw">let</span> (dist, g') <span class="fu">=</span> runSample s g</a>
+<a class="sourceLine" id="cb11-3" title="3">                 (a, g'') <span class="fu">=</span> sampleFrom dist g'</a>
+<a class="sourceLine" id="cb11-4" title="4">             <span class="kw">in</span> (a, <span class="fu">snd</span> <span class="fu">$</span> next g'')</a></code></pre></div>
+<p>Small technicality: We do an extra ‘next’ in order to get one more ‘RandomGen’ because when we sample from normal distributions, we consume one extra ‘RandomGen’ due to the Box-Muller transform.</p>
+<p>We can then build on top of this function to do multiple samples or other cool things.</p>
+<p>Yay! We’re done! Let’s give our monad a test.</p>
+<h3 id="testing-by-doing-what-we-wanted-to-do-after-having-done-what-we-needed-to-do">Testing by doing what we wanted to do after having done what we needed to do</h3>
+<h4 id="shady-gambler">Shady gambler</h4>
+<p>We can now run our shadyGambler test with the fair coin.</p>
+<p>First we define a type synonym for Sample called Sampler that specializes the RandomGen and the Sampleable to StdGen and Distribution, just so that we have shorter type annotations for these tests.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">type</span> <span class="dt">Sampler</span> a <span class="fu">=</span> <span class="dt">Sample</span> <span class="dt">StdGen</span> <span class="dt">Distribution</span> a</a>
+<a class="sourceLine" id="cb12-2" title="2"></a>
+<a class="sourceLine" id="cb12-3" title="3"><span class="ot">fairCoin ::</span> <span class="dt">Sampler</span> <span class="dt">Bool</span></a>
+<a class="sourceLine" id="cb12-4" title="4">fairCoin <span class="fu">=</span> bernoulli <span class="fl">0.5</span></a>
+<a class="sourceLine" id="cb12-5" title="5"></a>
+<a class="sourceLine" id="cb12-6" title="6"><span class="ot">shadyGambler ::</span> <span class="dt">Bool</span> <span class="ot">-&gt;</span> <span class="dt">Sampler</span> <span class="dt">Double</span></a>
+<a class="sourceLine" id="cb12-7" title="7">shadyGambler b <span class="fu">=</span> <span class="kw">if</span> b <span class="kw">then</span> discrete [(<span class="dv">100</span>, <span class="fl">0.9</span>), (<span class="fu">-</span><span class="dv">100</span>, <span class="fl">0.1</span>)]</a>
+<a class="sourceLine" id="cb12-8" title="8">                 <span class="kw">else</span> certain (<span class="fu">-</span><span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb12-9" title="9"></a>
+<a class="sourceLine" id="cb12-10" title="10"><span class="ot">gamblerGivenCoin ::</span> <span class="dt">Sampler</span> <span class="dt">Bool</span> <span class="ot">-&gt;</span> <span class="dt">Sampler</span> <span class="dt">Double</span></a>
+<a class="sourceLine" id="cb12-11" title="11">gamblerGivenCoin coin <span class="fu">=</span> coin <span class="fu">&gt;&gt;=</span> shadyGambler</a>
+<a class="sourceLine" id="cb12-12" title="12"></a>
+<a class="sourceLine" id="cb12-13" title="13">main <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb12-14" title="14">    s <span class="ot">&lt;-</span> sampleION <span class="dv">1000000</span> <span class="fu">$</span> gamblerGivenCoin fairCoin</a>
+<a class="sourceLine" id="cb12-15" title="15">    <span class="kw">let</span> wins <span class="fu">=</span> S.filter (<span class="fu">==</span> <span class="dv">100</span>) s</a>
+<a class="sourceLine" id="cb12-16" title="16">        losses <span class="fu">=</span> S.filter (<span class="fu">==</span> (<span class="fu">-</span><span class="dv">100</span>)) s</a>
+<a class="sourceLine" id="cb12-17" title="17">    <span class="fu">putStrLn</span> <span class="fu">$</span> <span class="st">&quot;Wins with fair coin: &quot;</span> <span class="fu">++</span> (<span class="fu">show</span> <span class="fu">$</span> <span class="fu">length</span> wins)</a>
+<a class="sourceLine" id="cb12-18" title="18">    <span class="fu">putStrLn</span> <span class="fu">$</span> <span class="st">&quot;Losses with fair coin: &quot;</span> <span class="fu">++</span> (<span class="fu">show</span> <span class="fu">$</span> <span class="fu">length</span> losses)</a></code></pre></div>
+<p>Results:</p>
+<pre><code>&quot;Wins with fair coin: 449903&quot;
+&quot;Losses with fair coin: 550097&quot;</code></pre>
+<p>We expect to win 45% of the time and lose 55% of the time (try working it out on paper! It’s relatively simple with this computation.).</p>
+<p>We confirm that our results match our expectations by testing the null hypothesis that we expect to win 45% of the time. We use the central limit theorem help us do this.</p>
+<p>Under our null hypothesis, our number of wins takes on a normal distribution with population mean 450,000 and population variance 247,500 (0.45 x 0.55 * 1,000,000). Our population standard deviation is thus ~497.5.</p>
+<p>Since our sample mean is 449903, which is only 97 away from our claimed population mean, we accept the null hypothesis as the sample mean z-score is only around -0.195.</p>
+<p>Hurray!</p>
+<h4 id="monty-hall">Monty Hall</h4>
+<p>Let’s run through another test, just for fun.</p>
+<p>We’ll now create a Sample for the classic <a href="https://en.wikipedia.org/wiki/Monty_Hall_problem">Monty Hall problem</a>.</p>
+<p>First we’ll need to define some types.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb14-1" title="1"><span class="kw">data</span> <span class="dt">Prize</span> <span class="fu">=</span> <span class="dt">Goat</span> <span class="fu">|</span> <span class="dt">Car</span></a></code></pre></div>
+<p>Cool! As we know very well, the Monty Hall problem starts off with 3 doors, where 2 have goats behind them and 1 has a car behind it.</p>
+<p>Oh, and we’re interested in getting the car.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb15-1" title="1"><span class="ot">doorInit ::</span> <span class="dt">Sampler</span> <span class="dt">Prize</span></a>
+<a class="sourceLine" id="cb15-2" title="2">doorInit <span class="fu">=</span> uniform [<span class="dt">Car</span>, <span class="dt">Goat</span>, <span class="dt">Goat</span>]</a></code></pre></div>
+<p>We first pick a door, and then out of the other doors the announcer reveals a Goat. We then have a decision to make: do we switch doors or stay with the one that we originally chose? <a href="https://www.youtube.com/watch?v=Zr_xWfThjJ0">Kevin Spacey (and probability theory) says switch.</a></p>
+<p>But because we’re sharp of wit and aware of Kevin Spacey’s tricks, we intelligently choose to simulate our fate if we decide to listen to him.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb16-1" title="1"><span class="ot">montyHall ::</span> <span class="dt">Sampler</span> <span class="dt">Prize</span></a>
+<a class="sourceLine" id="cb16-2" title="2">montyHall <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb16-3" title="3">    firstPick <span class="ot">&lt;-</span> doorInit</a>
+<a class="sourceLine" id="cb16-4" title="4">    <span class="kw">let</span> remainingDoors <span class="fu">=</span> removeDoor firstPick doorInit</a>
+<a class="sourceLine" id="cb16-5" title="5">    removeDoor <span class="dt">Goat</span> remainingDoors</a></code></pre></div>
+<p>Cool! We pick from the initial set of doors, then out of the remaining doors the announcer reveals a goat (effectively removing that door from our decision making process because, ew, goats), and then we pick the remaining door. (i.e. switch doors)</p>
+<p>Let’s run this simulation a hundred thousand times and see what we get!</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb17-1" title="1">main <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb17-2" title="2">    gen <span class="ot">&lt;-</span> newStdGen</a>
+<a class="sourceLine" id="cb17-3" title="3">    <span class="kw">let</span> a <span class="fu">=</span> sampleN <span class="dv">100000</span> montyHall gen</a>
+<a class="sourceLine" id="cb17-4" title="4">        a' <span class="fu">=</span> S.filter (<span class="fu">==</span> <span class="dt">Car</span>) a</a>
+<a class="sourceLine" id="cb17-5" title="5">        a'' <span class="fu">=</span> S.filter (<span class="fu">==</span> <span class="dt">Goat</span>) a</a>
+<a class="sourceLine" id="cb17-6" title="6">    <span class="fu">putStrLn</span> <span class="fu">$</span> <span class="st">&quot;Number of cars won: &quot;</span> <span class="fu">++</span> (<span class="fu">show</span> <span class="fu">$</span> <span class="fu">length</span> a')</a>
+<a class="sourceLine" id="cb17-7" title="7">    <span class="fu">putStrLn</span> <span class="fu">$</span> <span class="st">&quot;Number of goats won: &quot;</span> <span class="fu">++</span> (<span class="fu">show</span> <span class="fu">$</span> <span class="fu">length</span> a'')</a>
+<a class="sourceLine" id="cb17-8" title="8"></a>
+<a class="sourceLine" id="cb17-9" title="9"><span class="dt">Number</span> <span class="kw">of</span> cars won<span class="fu">:</span> <span class="dv">66659</span></a>
+<a class="sourceLine" id="cb17-10" title="10"><span class="dt">Number</span> <span class="kw">of</span> goats won<span class="fu">:</span> <span class="dv">33341</span></a></code></pre></div>
+<p>We <strong>could</strong> test if our sample mean is significantly different from the expected win rate of 2/3, but the test data should be adequately convincing. It seems that we can trust Kevin Spacey (for now).</p>
+<h4 id="swindlers-dice">Swindler’s Dice</h4>
+<p>Going along with our theme of gambling, we now describe another probability riddle: <a href="http://www.braingle.com/brainteasers/16401/swinders-dice.html">Swindler’s Dice</a>.</p>
+<blockquote>
+<p>A swindler says: “If you roll a 1 on this die, you get double your money! If not, you lose.”</p>
+<p>A fool says: “But that’s only 1 out of 6 odds…”</p>
+<p>A swindler says: “Yes, but I’ll let you roll 3 times to get a 1.”</p>
+</blockquote>
+<p>Are the odds fair? Let’s see!</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb18-1" title="1"><span class="ot">swindler ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></a>
+<a class="sourceLine" id="cb18-2" title="2">swindler i <span class="fu">=</span> i <span class="fu">==</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb18-3" title="3"></a>
+<a class="sourceLine" id="cb18-4" title="4"><span class="ot">die ::</span> <span class="dt">Sampler</span> <span class="dt">Int</span></a>
+<a class="sourceLine" id="cb18-5" title="5">die <span class="fu">=</span> uniform [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>]</a>
+<a class="sourceLine" id="cb18-6" title="6"></a>
+<a class="sourceLine" id="cb18-7" title="7"><span class="ot">swindlersDice ::</span> <span class="dt">Sampler</span> <span class="dt">Bool</span></a>
+<a class="sourceLine" id="cb18-8" title="8">swindlersDice <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb18-9" title="9">    s1 <span class="ot">&lt;-</span> die</a>
+<a class="sourceLine" id="cb18-10" title="10">    s2 <span class="ot">&lt;-</span> die</a>
+<a class="sourceLine" id="cb18-11" title="11">    s3 <span class="ot">&lt;-</span> die</a>
+<a class="sourceLine" id="cb18-12" title="12">    <span class="fu">return</span> (swindler s1 <span class="fu">||</span> swindler s2 <span class="fu">||</span> swindler s3)</a></code></pre></div>
+<p>And after running it:</p>
+<pre><code>Number of wins: 42071
+Number of losses: 57929</code></pre>
+<p>The expected win rate is about 42%. We obtain this by taking 1 - (5/6)^3, as there is only one way to lose, and it’s to not get one on all 3 dice.</p>
+<p>Our results are quite close to the expected win rate! This is not a fair game! Huzzah!</p>
+<h3 id="statistically-sophisticated-gambler">Statistically sophisticated gambler</h3>
+<p>For our final trick, we’ll toss around some different probability distributions to demonstrate how we can sample from some more complex probabilitic computations.</p>
+<p>With a super duper contrived example.</p>
+<p>Let us recapitulate to our good friend, the shady gambler. He’s since then ceased his shady ways and now resorts to using probability to dazzle and bewilder unwitting victims.</p>
+<p>His latest proposal is this: if you get heads on a coin flip, then you win an amount of money normally distributed with mean 100 and standard deviation 20. If you get tails, then you lose an amount of money normally distributed with mean -100 and standard deviation 10.</p>
+<p>So basically your typical neighbourhood thug.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb20-1" title="1"><span class="ot">contrivedGambler ::</span> <span class="dt">Bool</span> <span class="ot">-&gt;</span> <span class="dt">Sampler</span> <span class="dt">Double</span></a>
+<a class="sourceLine" id="cb20-2" title="2">contrivedGambler b <span class="fu">=</span> <span class="kw">if</span> b </a>
+<a class="sourceLine" id="cb20-3" title="3">                     <span class="kw">then</span> normal <span class="dv">100</span> <span class="dv">20</span></a>
+<a class="sourceLine" id="cb20-4" title="4">                     <span class="kw">else</span> normal (<span class="fu">-</span><span class="dv">100</span>) <span class="dv">10</span></a></code></pre></div>
+<p>We’ll continue using our fair coin because we’re honest gambling addicts.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb21-1" title="1"><span class="ot">fairCoin ::</span> <span class="dt">Sampler</span> <span class="dt">Bool</span></a>
+<a class="sourceLine" id="cb21-2" title="2">fairCoin <span class="fu">=</span> bernoulli <span class="fl">0.5</span></a>
+<a class="sourceLine" id="cb21-3" title="3"></a>
+<a class="sourceLine" id="cb21-4" title="4"><span class="ot">gamblerWithCoin ::</span> <span class="dt">Sampler</span> <span class="dt">Double</span></a>
+<a class="sourceLine" id="cb21-5" title="5">gamblerWithCoin <span class="fu">=</span> fairCoin <span class="fu">&gt;&gt;=</span> contrivedGambler</a>
+<a class="sourceLine" id="cb21-6" title="6"></a>
+<a class="sourceLine" id="cb21-7" title="7">main <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb21-8" title="8">    gen <span class="ot">&lt;-</span> newStdGen</a>
+<a class="sourceLine" id="cb21-9" title="9">    <span class="kw">let</span> winnings <span class="fu">=</span> sampleN <span class="dv">100000</span> gamblerWithCoin gen</a>
+<a class="sourceLine" id="cb21-10" title="10">    renderableToFile def <span class="st">&quot;contrived.png&quot;</span> <span class="fu">$</span> toRenderable <span class="fu">$</span> histogram <span class="fu">$</span> toList winnings</a></code></pre></div>
+<p>Let’s see how our winnings are distributed!</p>
+<p><img src="../images/contrived.png" /></p>
+<p>Dude that’s pretty cool.</p>
+<h3 id="conclusion">Conclusion</h3>
+<p>So here we are, at the end of a very long blog post. I hope this helps anyone who wanted something like this, to very nicely write and sample from arbitrary probability distributions. This post, however, doesn’t cover the stochastic process part of the <strong>stochastic</strong> package, which is also pretty fun to play with. That will have to be for another post! I’ll also put up some profiling reports with some of the larger computations that we’ll run.</p>
+<p><a href="https://github.com/kevin-li-195/stat-sampling">Github repo</a></p>
+<p><a href="https://hackage.haskell.org/package/stochastic">Hackage page</a></p>
+<p>Disclaimer: I’m no statistician, nor am I a genius category theorist, so if you find any mistakes/bugs/optimizations, please submit a pull request! There is also a super informal list of items to do in my repo, which aren’t in any particular order. Also feel free to get in touch via email; if you have anything to teach me I would be happy to listen.</p>
+
+        </div>
+        <div id="footer">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+        </div>
+    </body>
+</html>
