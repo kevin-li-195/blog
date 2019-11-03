@@ -1,7 +1,6 @@
------
-title: The Snake Lizard Paradox
-subject: Probability/Haskell
------
+# The Snake-Lizard Paradox
+## Subject: Probability
+### Jan 31, 2017
 
 Written jointly with [Jacob Errington](https://jerrington.me).
 

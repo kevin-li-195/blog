@@ -1,7 +1,6 @@
------
-title: A Monad for Probabilistic Computations
-subject: Haskell
------
+# A Monad for Probabilistic Computations
+## Subject: Haskell, Probability
+### Aug 24, 2016
 
 ### What we want to do
 
@@ -330,7 +329,6 @@ Number of goats won: 33341
 We **could** test if our sample mean is significantly
 different from the expected win rate of 2/3, but the
 test data should be adequately convincing.
-It seems that we can trust Kevin Spacey (for now).
 
 #### Swindler's Dice
 
@@ -420,8 +418,6 @@ main = do
 Let's see how our winnings are distributed!
 
 ![](/images/contrived.png)
-
-Dude that's pretty cool.
 
 ### Conclusion
 

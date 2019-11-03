@@ -1,3 +1,0 @@
-#!/bin/bash
-
-stack run clean; stack run build; chmod a+rx -R _site
