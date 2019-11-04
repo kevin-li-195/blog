@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Route, Link } from 'react-router-dom';
 import './App.scss';
 import marked from 'marked';
 
@@ -9,8 +9,18 @@ const renderer = new marked.Renderer();
 
 markedImages(renderer);
 
+interface RenderableFile {
+    filename: string,
+    label: string,
+    path: string
+}
+
 interface MarkdownProps {
-    post: Post
+    post: RenderableFile
+}
+
+interface ChartProps {
+    chart: RenderableFile
 }
 
 export const Markdown: React.FC<MarkdownProps> = ({post}) => {
@@ -30,10 +40,10 @@ export const Markdown: React.FC<MarkdownProps> = ({post}) => {
     )
 }
 
-interface Post {
-    filename: string,
-    label: string,
-    path: string
+export const Chart: React.FC<ChartProps> = ({chart}) => {
+    return(
+        <iframe title={chart.label} src={`/chart_pages/${chart.filename}`} />
+    )
 }
 
 const blogposts: Post[] = [
@@ -49,16 +59,20 @@ const blogposts: Post[] = [
     }
 ];
 
+const charts = [
+    {
+        filename: "yield-curve.html",
+        label: "3D Yield Curve",
+        path: "yield-curve-chart"
+    }
+]
+
 const Header: React.FC<void> = () => (
-    <header className="header">
+    <header>
+        <h1>Blog - Kevin Li</h1>
         <Link to="/posts">Posts</Link>
         <Link to="/charts">Charts</Link>
     </header>
-)
-
-const Charts: React.FC<void> = () => (
-    <Switch>
-    </Switch>
 )
 
 export const Blog: React.FC<void> = () => {
@@ -82,18 +96,63 @@ export const Blog: React.FC<void> = () => {
                         </header>
                     )
                 }}/>
+                <Route path={"/charts"} render={() => {
+                    return(
+                        <header>
+                            {
+                                charts.map((chart) => {
+                                    return(
+                                        <Link key={chart.path} to={`/charts/${chart.path}`}>
+                                            {chart.label}
+                                        </Link>
+                                    )
+                                })
+                            }
+                        </header>
+                    )
+                }}/>
+                <Route exact path={["/", "/posts", "/charts"]} render={() => {
+                    return(
+                        <div>
+                        <p>
+                            Hey, welcome to my blog. I
+                            sometimes write stuff here that I
+                            find interesting or educational.
+                            <br/>
+                            <br/>
+                            Broadly, the subjects span economics,
+                            finance, probability & stats, and programming.
+                            <br/>
+                            <br/>
+                            Enjoy your stay!
+                            <br/>
+                            <br/>
+                            You can email me at: zl2606 [at(@)] columbia [dot(.)] edu
+                            if you'd like to chat!
+                        </p>
+                        </div>
+                    )
+                }} />
                 {
-                    blogposts.map((post) => 
-                        <Route key={post.path + "post"} path={`/posts`} render={() => {
-                            return(
-                                <Route path={`/posts/${post.path}`} render={() => 
-                                    <Markdown post={post} />
-                                } />
-                            )
-                        }} />
+                    blogposts.map((post) => {
+                        return(
+                            <Route path={`/posts/${post.path}`} render={() => 
+                                <Markdown post={post} />
+                            } />
+                        )
+                    }
                     )
                 }
-                <Route path="/charts" component={Charts} />
+                {
+                    charts.map((chart) => {
+                        return(
+                            <Route path={`/charts/${chart.path}`} render={() => 
+                                <Chart chart={chart} />
+                            } />
+                        )
+                    }
+                    )
+                }
             </BrowserRouter>
             </div>
         </div>
