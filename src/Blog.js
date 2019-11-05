@@ -71,9 +71,18 @@ export const Markdown: React.FC<MarkdownProps> = ({post}) => {
 }
 
 export const Chart: React.FC<ChartProps> = ({chart}) => {
-    return(
-        <iframe title={chart.label} src={`/chart_pages/${chart.filename}`} />
-    )
+    const [time, setTime] = useState(1);
+    
+    if (time > 0) {
+        setTimeout(() => setTime(time - 1), 800);
+        return(
+            <p>Loading...</p>
+        )
+    } else { 
+        return(
+            <iframe title={chart.label} src={`/chart_pages/${chart.filename}`} />
+        )
+    }
 }
 
 const blogposts: Post[] = [
@@ -182,7 +191,9 @@ export const Blog: React.FC<void> = () => {
                     charts.map((chart) => {
                         return(
                             <Route path={`/charts/${chart.path}`} render={() => 
-                                <Chart chart={chart} />
+                                <>
+                                    <Chart chart={chart} />
+                                </>
                             } />
                         )
                     }
