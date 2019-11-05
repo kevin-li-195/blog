@@ -1,13 +1,42 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Route, Link } from 'react-router-dom';
 import './App.scss';
-import marked from 'marked';
+import marked from 'marked-katex';
+import ReactMarkdown from 'react-markdown';
+import MathJax from 'react-mathjax';
+import RemarkMathPlugin from 'remark-math';
 
-import markedImages from 'marked-images';
+function MarkdownRender(props) {
+    const newProps = {
+        ...props,
+        plugins: [
+          RemarkMathPlugin,
+        ],
+        renderers: {
+          ...props.renderers,
+          math: (props) =>
+            <MathJax.Node formula={props.value} />,
+          inlineMath: (props) =>
+            <MathJax.Node inline formula={props.value} />
+        }
+      };
+      return (
+        <MathJax.Provider input="tex">
+            <ReactMarkdown {...newProps} />
+        </MathJax.Provider>
+      );
+}
 
-const renderer = new marked.Renderer();
-
-markedImages(renderer);
+marked.setOptions({
+  renderer: new marked.Renderer(),
+  gfm: true,
+  tables: true,
+  breaks: false,
+  pedantic: false,
+  sanitize: false,
+  smartLists: true,
+  smartypants: false
+});
 
 interface RenderableFile {
     filename: string,
@@ -30,13 +59,14 @@ export const Markdown: React.FC<MarkdownProps> = ({post}) => {
         .then(resp => resp.text())
         .then(text => {
             console.log(text);
-            setPostContents(marked(text))
+            setPostContents(text)
         });
     
     return(
         postContents === null
         ? <></>
-        : <article dangerouslySetInnerHTML={{ __html : postContents }}/>
+        // : <article dangerouslySetInnerHTML={{ __html : postContents }}/>
+        : <MarkdownRender source={postContents} />
     )
 }
 
@@ -47,6 +77,11 @@ export const Chart: React.FC<ChartProps> = ({chart}) => {
 }
 
 const blogposts: Post[] = [
+    {
+        filename: "beta-over-time.md",
+        label: "Beta over Time",
+        path: "beta-over-time"
+    },
     {
         filename: "2017-01-31-snek-lizard-paradox.md",
         label: "The Snake-Lizard Probability Paradox",
