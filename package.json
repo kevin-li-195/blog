@@ -6,7 +6,7 @@
   "dependencies": {
     "marked": "^0.7.0",
     "marked-katex": "^0.3.8",
-    "node-sass": "^4.13.0",
+    "node-sass": "^7.0.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-html-parser": "^2.0.2",
